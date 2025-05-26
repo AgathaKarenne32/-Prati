@@ -2,26 +2,29 @@ class node {
     constructor(value) {
         this.value = value;
         this.next = null;
+        this.prev = null; // Added 'prev' for doubly linked list
     }
-
 }
 
-class LinkledList {
+class LinkedList { // Renamed from LinkledList for consistency
     constructor() {
         this.head = null;
+        this.length = 0; // Added length for consistency
     }
 
     inserirInicio(v) {
-        let novo = new node(v)
-        novo.proximo = this.head
+        let novo = new node(v);
+        novo.next = this.head;
+        // No 'prev' handling needed for a singly linked list here
         this.head = novo;
+        this.length++;
     }
 
     imprimir() {
-        let atual = this.head
-        let str = ""
+        let atual = this.head;
+        let str = "";
         while (atual) {
-            str += atual.value + " -> "
+            str += atual.value + " -> ";
             atual = atual.next;
         }
         str += "null";
@@ -29,32 +32,38 @@ class LinkledList {
     }
 }
 
-let lista = new LinkledList();
+let lista = new LinkedList();
 
 lista.inserirInicio(10);
 lista.inserirInicio(20);
-
-lista.imprimir()
+lista.imprimir(); // Output: 20 -> 10 -> null
 
 class DoublyLinkedList {
     constructor() {
-        this.head = null
-        this.tail = null
-        this.length = 0
+        this.head = null;
+        this.tail = null;
+        this.length = 0;
     }
 
+    // Inserts a new node at the beginning of the list
     inserirInicio(v) {
-        let novo = new node(v);
-        novo.next = this.head;
-        if (this.head) {
+        const novo = new node(v);
+        if (!this.head) { // If the list is empty
+            this.head = novo;
+            this.tail = novo;
+        } else {
+            novo.next = this.head;
             this.head.prev = novo;
+            this.head = novo;
         }
-        this.head = novo;
+        this.length++;
+        return this; // Return the list for chaining
     }
 
+    // Inserts a new node at the end of the list
     inserirFim(v) {
-        let novo = new node(v);
-        if (!this.head) {
+        const novo = new node(v);
+        if (!this.head) { // If the list is empty
             this.head = novo;
             this.tail = novo;
         } else {
@@ -63,30 +72,90 @@ class DoublyLinkedList {
             this.tail = novo;
         }
         this.length++;
+        return this; // Return the list for chaining
     }
 
-    inserirAtualizacao(v, pos) {
-        if (pos < 0 || pos >= this.length) {
-            console.log("Posição inválida");
-            return;
+    // Inserts a new node at a specific position (index)
+    inserirEmPosicao(v, index) {
+        if (index < 0 || index > this.length) {
+            console.log("Posição inválida para inserção.");
+            return null; // Or throw an error
         }
-        let novo = new node(v);
-        if (pos === 0) {
-            this.inserirInicio(v);
+        if (index === 0) {
+            return this.inserirInicio(v);
+        }
+        if (index === this.length) {
+            return this.inserirFim(v);
+        }
+
+        const novo = new node(v);
+        let atual = this.head;
+        for (let i = 0; i < index - 1; i++) {
+            atual = atual.next;
+        }
+        // At this point, 'atual' is the node BEFORE the insertion point
+
+        novo.next = atual.next;
+        if (atual.next) { // Ensure there is a next node to update its 'prev'
+            atual.next.prev = novo;
+        }
+        atual.next = novo;
+        novo.prev = atual;
+
+        this.length++;
+        return this; // Return the list for chaining
+    }
+
+    // Prints the list from head to tail
+    imprimir() {
+        if (!this.head) {
+            console.log("null");
             return;
         }
         let atual = this.head;
-        for (let i = 0; i < pos - 1; i++) {
+        let str = "";
+        while (atual) {
+            str += atual.value + " <-> ";
             atual = atual.next;
         }
-        novo.next = atual.next;
-        novo.prev = atual;
-        if (atual.next) {
-            atual.next.prev = novo;
-        } else {
-            this.tail = novo;
+        str += "null";
+        console.log(str);
+    }
+
+    // Prints the list from tail to head (useful for doubly linked lists)
+    imprimirReverso() {
+        if (!this.tail) {
+            console.log("null");
+            return;
         }
-        atual.next = novo;
-        this.length++;
+        let atual = this.tail;
+        let str = "null";
+        while (atual) {
+            str = atual.value + " <-> " + str;
+            atual = atual.prev;
+        }
+        console.log(str);
     }
 }
+
+console.log("\n--- Doubly Linked List Examples ---");
+let dblLista = new DoublyLinkedList();
+
+dblLista.inserirFim(100);
+dblLista.inserirInicio(50);
+dblLista.inserirFim(200);
+dblLista.inserirEmPosicao(150, 2); // Insert 150 at index 2 (between 100 and 200)
+
+console.log("List from head to tail:");
+dblLista.imprimir(); // Output: 50 <-> 100 <-> 150 <-> 200 <-> null
+console.log("List from tail to head:");
+dblLista.imprimirReverso(); // Output: null <-> 200 <-> 150 <-> 100 <-> 50
+
+console.log("Length of the list:", dblLista.length); // Output: 4
+
+dblLista.inserirEmPosicao(0, 0); // Insert at the beginning
+dblLista.inserirEmPosicao(300, 5); // Insert at the end
+
+console.log("\nList after more insertions:");
+dblLista.imprimir(); // Output: 0 <-> 50 <-> 100 <-> 150 <-> 200 <-> 300 <-> null
+console.log("Length of the list:", dblLista.length); // Output: 6
