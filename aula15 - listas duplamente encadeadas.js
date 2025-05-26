@@ -223,3 +223,8 @@ console.log("Removed from end:", removerFim(dblLista)); // Output: 300
 console.log("Removed from start:", removerInicio(dblLista)); // Output: 0
 console.log("Removed from position 2:", removerEmPosicao(dblLista, 2)); // Output: 100
 console.log("List after removals:");
+
+dblLista.imprimir(); // Output: 50 <-> 150 <-> 200 <-> null
+console.log("Length of the list after removals:", dblLista.length); // Output: 3
+console.log("List from tail to head after removals:");
+dblLista.imprimirReverso(); // Output: null <-> 200 <-> 150 <-> 50
