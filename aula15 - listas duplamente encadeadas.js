@@ -159,3 +159,67 @@ dblLista.inserirEmPosicao(300, 5); // Insert at the end
 console.log("\nList after more insertions:");
 dblLista.imprimir(); // Output: 0 <-> 50 <-> 100 <-> 150 <-> 200 <-> 300 <-> null
 console.log("Length of the list:", dblLista.length); // Output: 6
+
+removerFim = (lista) => {
+    if (!lista.head) {
+        console.log("A lista está vazia.");
+        return null;
+    }
+    const valorRemovido = lista.tail.value;
+    if (lista.head === lista.tail) { // Only one element
+        lista.head = null;
+        lista.tail = null;
+    } else {
+        lista.tail = lista.tail.prev;
+        lista.tail.next = null;
+    }
+    lista.length--;
+    return valorRemovido; // Return the removed value
+}
+removerInicio = (lista) => {
+    if (!lista.head) {
+        console.log("A lista está vazia.");
+        return null;
+    }
+    const valorRemovido = lista.head.value;
+    if (lista.head === lista.tail) { // Only one element
+        lista.head = null;
+        lista.tail = null;
+    } else {
+        lista.head = lista.head.next;
+        lista.head.prev = null;
+    }
+    lista.length--;
+    return valorRemovido; // Return the removed value
+}
+removerEmPosicao = (lista, index) => {
+    if (index < 0 || index >= lista.length) {
+        console.log("Posição inválida para remoção.");
+        return null; // Or throw an error
+    }
+    if (index === 0) {
+        return removerInicio(lista);
+    }
+    if (index === lista.length - 1) {
+        return removerFim(lista);
+    }
+
+    let atual = lista.head;
+    for (let i = 0; i < index; i++) {
+        atual = atual.next;
+    }
+    
+    const valorRemovido = atual.value;
+    atual.prev.next = atual.next;
+    if (atual.next) { // Ensure there is a next node to update its 'prev'
+        atual.next.prev = atual.prev;
+    }
+    
+    lista.length--;
+    return valorRemovido; // Return the removed value
+}
+console.log("\n--- Removing Elements from Doubly Linked List ---");
+console.log("Removed from end:", removerFim(dblLista)); // Output: 300
+console.log("Removed from start:", removerInicio(dblLista)); // Output: 0
+console.log("Removed from position 2:", removerEmPosicao(dblLista, 2)); // Output: 100
+console.log("List after removals:");
