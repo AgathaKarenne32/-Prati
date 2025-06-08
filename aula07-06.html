@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo de Busca Debounced</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        input {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        #resultadoBusca {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Pesquisa com Debounce</h1>
+
+    <input type="text" id="busca" placeholder="Digite sua pesquisa">
+
+    <div id="resultadoBusca"></div>
+
+    <script>
+        // Debounce function
+        function debounce(fn, delay) {
+            let timer = null;
+
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => {
+                    fn.apply(this, args);
+                }, delay);
+            };
+        }
+
+        // Function to perform the search
+        function pesquisar(textoDaBusca) {
+            console.log('Buscando por:', textoDaBusca);
+            // In a real application, you would make an API call here
+            // to fetch search results based on 'textoDaBusca'.
+
+            // Displaying the search term in the UI for demonstration
+            document.getElementById('resultadoBusca').textContent = `Resultados para: "${textoDaBusca}"`;
+        }
+
+        // Get the input element
+        const inputBusca = document.getElementById('busca');
+
+        // Create a debounced version of the pesquisar function
+        // The search will be performed 500ms after the user stops typing.
+        const pesquisaDebounced = debounce(pesquisar, 500); // Reduced delay for a snappier feel
+
+        // Add an event listener to the input field
+        inputBusca.addEventListener('input', (event) => {
+            // Call the debounced function with the current input value
+            pesquisaDebounced(event.target.value);
+        });
+    </script>
+
+</body>
+</html>
